@@ -189,6 +189,85 @@ a:hover {
     margin: 0;
 }
 
+/* Pages with tables */
+.tp-page {
+    display: grid;
+    gap: var(--tp-space-4);
+}
+
+.tp-page__body {
+    margin-top: var(--tp-space-2);
+}
+
+.tp-body .tp-table.ui-datatable {
+    width: 100%;
+}
+
+.tp-body .tp-table .ui-datatable-data td,
+.tp-body .tp-table .ui-datatable-header,
+.tp-body .tp-table th {
+    border-color: var(--tp-color-border);
+}
+
+.tp-body .tp-table th {
+    background: var(--tp-color-surface);
+    color: var(--tp-color-muted);
+    font-size: var(--tp-text-sm);
+    font-weight: 600;
+}
+
+.tp-col-numeric {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.tp-col-actions {
+    white-space: nowrap;
+}
+
+.tp-col-actions .ui-button {
+    margin-right: var(--tp-space-2);
+}
+
+.tp-col-footer-label {
+    text-align: right;
+    font-weight: 600;
+}
+
+.tp-pl-positive {
+    color: var(--tp-color-success);
+    font-weight: 600;
+}
+
+.tp-pl-negative {
+    color: var(--tp-color-danger);
+    font-weight: 600;
+}
+
+.tp-trade-dialog {
+    display: grid;
+    gap: var(--tp-space-4);
+    min-width: min(18rem, 100%);
+}
+
+.tp-body .ui-button.tp-button-dialog {
+    width: auto;
+    margin-left: var(--tp-space-2);
+}
+
+/* Growl must sit above PrimeFaces modal overlays during trade dialogs. */
+.tp-body .ui-growl {
+    z-index: 9999;
+}
+
+.tp-trade-messages {
+    margin: 0;
+}
+
+.tp-trade-messages.ui-messages {
+    border-radius: var(--tp-radius);
+}
+
 .tp-card {
     background: var(--tp-color-surface);
     border: 1px solid var(--tp-color-border);

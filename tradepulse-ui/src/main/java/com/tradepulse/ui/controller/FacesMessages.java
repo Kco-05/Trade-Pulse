@@ -12,4 +12,9 @@ final class FacesMessages {
         FacesContext.getCurrentInstance()
                 .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, null));
     }
+
+    static void success(String summary) {
+        FacesContext.getCurrentInstance()
+                .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, summary, null));
+    }
 }

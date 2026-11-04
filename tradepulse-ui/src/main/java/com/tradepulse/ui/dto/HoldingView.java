@@ -9,4 +9,24 @@ public record HoldingView(
         BigDecimal currentMarketPrice,
         BigDecimal profitLoss
 ) {
+
+    public String getTickerSymbol() {
+        return tickerSymbol;
+    }
+
+    public Integer getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public BigDecimal getAverageBuyPrice() {
+        return averageBuyPrice;
+    }
+
+    public BigDecimal getCurrentMarketPrice() {
+        return currentMarketPrice;
+    }
+
+    public BigDecimal getProfitLoss() {
+        return profitLoss;
+    }
 }

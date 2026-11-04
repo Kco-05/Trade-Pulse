@@ -1,0 +1,52 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewAction action="#{userSession.refreshBalance}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="title">History</ui:define>
+
+    <ui:define name="content">
+        <section class="tp-page" aria-labelledby="historyHeading">
+            <h1 id="historyHeading" class="tp-heading">Transaction history</h1>
+            <p class="tp-muted">Newest trades first.</p>
+
+            <h:form id="historyForm" styleClass="tp-page__body">
+                <p:dataTable id="historyTable" value="#{historyBean.transactions}" var="tx"
+                             emptyMessage="No transactions yet."
+                             styleClass="tp-table" rowKey="#{tx.transactionId}">
+                    <p:column headerText="ID" styleClass="tp-col-numeric">
+                        <h:outputText value="#{tx.transactionId}"/>
+                    </p:column>
+                    <p:column headerText="Ticker">
+                        <h:outputText value="#{tx.tickerSymbol}"/>
+                    </p:column>
+                    <p:column headerText="Type">
+                        <h:outputText value="#{tx.transactionType}"/>
+                    </p:column>
+                    <p:column headerText="Quantity" styleClass="tp-col-numeric">
+                        <h:outputText value="#{tx.quantity}"/>
+                    </p:column>
+                    <p:column headerText="Price" styleClass="tp-col-numeric">
+                        <h:outputText value="#{tx.executionPrice}">
+                            <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="When">
+                        <h:outputText value="#{tx.timestamp}">
+                            <f:convertDateTime type="localDateTime" dateStyle="medium" timeStyle="short"
+                                               locale="en_US"/>
+                        </h:outputText>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </section>
+    </ui:define>
+</ui:composition>

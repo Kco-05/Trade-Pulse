@@ -1,0 +1,64 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewAction action="#{userSession.refreshBalance}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="title">Portfolio</ui:define>
+
+    <ui:define name="content">
+        <section class="tp-page" aria-labelledby="portfolioHeading">
+            <h1 id="portfolioHeading" class="tp-heading">Portfolio</h1>
+            <p class="tp-muted">Your holdings and unrealized profit or loss.</p>
+
+            <h:form id="portfolioForm" styleClass="tp-page__body">
+                <p:dataTable id="holdingsTable" value="#{portfolioBean.holdings}" var="holding"
+                             emptyMessage="No holdings yet. Buy stocks on the Market page."
+                             styleClass="tp-table" rowKey="#{holding.tickerSymbol}">
+                    <p:column headerText="Ticker">
+                        <h:outputText value="#{holding.tickerSymbol}"/>
+                    </p:column>
+                    <p:column headerText="Quantity" styleClass="tp-col-numeric">
+                        <h:outputText value="#{holding.totalQuantity}"/>
+                    </p:column>
+                    <p:column headerText="Avg buy" styleClass="tp-col-numeric">
+                        <h:outputText value="#{holding.averageBuyPrice}">
+                            <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Market price" styleClass="tp-col-numeric">
+                        <h:outputText value="#{holding.currentMarketPrice}">
+                            <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Profit / loss" styleClass="tp-col-numeric">
+                        <h:outputText value="#{holding.profitLoss}"
+                                      styleClass="#{holding.profitLoss.signum() &gt;= 0 ? 'tp-pl-positive' : 'tp-pl-negative'}">
+                            <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:columnGroup type="footer">
+                        <p:row>
+                            <p:column colspan="4" footerText="Total P/L" styleClass="tp-col-footer-label"/>
+                            <p:column styleClass="tp-col-numeric">
+                                <f:facet name="footer">
+                                    <h:outputText value="#{portfolioBean.totalProfitLoss}"
+                                                  styleClass="#{portfolioBean.totalProfitLoss.signum() &gt;= 0 ? 'tp-pl-positive' : 'tp-pl-negative'}">
+                                        <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
+                                    </h:outputText>
+                                </f:facet>
+                            </p:column>
+                        </p:row>
+                    </p:columnGroup>
+                </p:dataTable>
+            </h:form>
+        </section>
+    </ui:define>
+</ui:composition>

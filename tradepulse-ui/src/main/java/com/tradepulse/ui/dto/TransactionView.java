@@ -11,4 +11,28 @@ public record TransactionView(
         BigDecimal executionPrice,
         LocalDateTime timestamp
 ) {
+
+    public Long getTransactionId() {
+        return transactionId;
+    }
+
+    public String getTickerSymbol() {
+        return tickerSymbol;
+    }
+
+    public String getTransactionType() {
+        return transactionType;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public BigDecimal getExecutionPrice() {
+        return executionPrice;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
 }
