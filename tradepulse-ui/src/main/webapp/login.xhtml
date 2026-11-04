@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Log in</ui:define>
+
+    <ui:define name="content">
+        <section class="tp-auth" aria-labelledby="loginHeading">
+            <div class="tp-auth__intro">
+                <p class="tp-brand tp-brand--large">TradePulse</p>
+                <h1 id="loginHeading" class="tp-heading">Log in to your account</h1>
+                <p class="tp-muted">Trade ten simulated stocks with $100,000 of virtual cash.</p>
+            </div>
+
+            <h:form id="loginForm" styleClass="tp-card tp-form">
+                <div class="tp-field">
+                    <p:outputLabel for="username" value="Username"/>
+                    <p:inputText id="username" value="#{authBean.username}" autocomplete="username"
+                                 maxlength="50" required="true" requiredMessage="Enter your username."/>
+                    <p:message for="username" display="text"/>
+                </div>
+
+                <div class="tp-field">
+                    <p:outputLabel for="password" value="Password"/>
+                    <p:password id="password" value="#{authBean.password}" autocomplete="current-password"
+                                feedback="false" toggleMask="true"
+                                required="true" requiredMessage="Enter your password."/>
+                    <p:message for="password" display="text"/>
+                </div>
+
+                <p:commandButton value="Log in" action="#{authBean.login}" update="@form :growl"
+                                 styleClass="tp-button-primary"/>
+
+                <p class="tp-form__switch">
+                    New to TradePulse? <h:link outcome="register" value="Create an account"/>
+                </p>
+            </h:form>
+        </section>
+    </ui:define>
+</ui:composition>

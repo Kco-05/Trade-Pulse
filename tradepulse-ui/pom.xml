@@ -15,6 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>17</maven.compiler.release>
         <cargo.plugin.version>1.10.13</cargo.plugin.version>
+        <tomcat.version>10.1.31</tomcat.version>
     </properties>
 
     <dependencies>
@@ -75,14 +76,30 @@
                 <configuration>
                     <container>
                         <containerId>tomcat10x</containerId>
-                        <type>embedded</type>
+                        <type>installed</type>
+                        <artifactInstaller>
+                            <groupId>org.apache.tomcat</groupId>
+                            <artifactId>tomcat</artifactId>
+                            <version>${tomcat.version}</version>
+                            <type>zip</type>
+                        </artifactInstaller>
                     </container>
                     <configuration>
+                        <type>standalone</type>
                         <properties>
                             <cargo.servlet.port>8080</cargo.servlet.port>
-                            <cargo.servlet.context>/</cargo.servlet.context>
                         </properties>
                     </configuration>
+                    <deployables>
+                        <deployable>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>${project.artifactId}</artifactId>
+                            <type>war</type>
+                            <properties>
+                                <context>/</context>
+                            </properties>
+                        </deployable>
+                    </deployables>
                 </configuration>
             </plugin>
         </plugins>

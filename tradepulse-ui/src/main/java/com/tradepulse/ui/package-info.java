@@ -1,4 +1,4 @@
 /**
- * TradePulse UI package (JSF / CDI beans added in later phases).
+ * TradePulse JSF UI: Faces pages backed by CDI beans that call the three REST services.
  */
 package com.tradepulse.ui;

@@ -22,8 +22,17 @@ Virtual stock trading simulator. Users get virtual cash, watch simulated live pr
 cd stock-market-service && mvn spring-boot:run
 cd user-wallet-service && mvn spring-boot:run
 cd trading-portfolio-service && mvn spring-boot:run
-cd tradepulse-ui && mvn cargo:run
+cd tradepulse-ui && mvn package cargo:run
 ```
+
+The UI runs on Tomcat 10.1 started by the Cargo plugin. The first `cargo:run` downloads the Tomcat zip from Maven Central into `~/.m2`. Run `mvn package` first so Cargo deploys the latest WAR. Open http://localhost:8080/ (redirects to the login page).
+
+## UI notes
+
+- Stack: Jakarta Faces 4 (Mojarra), PrimeFaces 13 (saga theme), Weld 5 for CDI, on Tomcat 10.1.
+- Backend URLs live in `tradepulse-ui/src/main/resources/application.properties`.
+- `AuthFilter` redirects any page except login, register and Faces resources to `login.xhtml` when no user is signed in. AJAX requests get a Faces partial-response redirect.
+- Design tokens (colors, type scale, spacing, radius) are CSS variables at the top of `src/main/webapp/resources/css/app.css`. Fonts are Space Grotesk (headings) and IBM Plex Sans (body) from Google Fonts, falling back to Segoe UI when offline.
 
 ## H2 consoles
 
@@ -38,7 +47,7 @@ JDBC URL example: `jdbc:h2:file:./data/<db_name>` (see each service's `applicati
 - Username: `demo`
 - Password: `demo123`
 
-*(Seeded when wallet tables are empty — implemented in a later phase.)*
+Seeded by the wallet service when the `users` table is empty.
 
 ## API overview
 

@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Create account</ui:define>
+
+    <ui:define name="content">
+        <section class="tp-auth" aria-labelledby="registerHeading">
+            <div class="tp-auth__intro">
+                <p class="tp-brand tp-brand--large">TradePulse</p>
+                <h1 id="registerHeading" class="tp-heading">Create your account</h1>
+                <p class="tp-muted">New accounts start with $100,000.00 in virtual cash.</p>
+            </div>
+
+            <h:form id="registerForm" styleClass="tp-card tp-form">
+                <div class="tp-field">
+                    <p:outputLabel for="username" value="Username"/>
+                    <p:inputText id="username" value="#{authBean.username}" autocomplete="username"
+                                 maxlength="50" required="true" requiredMessage="Choose a username."
+                                 validatorMessage="Username must be 3 to 50 characters.">
+                        <f:validateLength minimum="3" maximum="50"/>
+                    </p:inputText>
+                    <small class="tp-hint">3 to 50 characters.</small>
+                    <p:message for="username" display="text"/>
+                </div>
+
+                <div class="tp-field">
+                    <p:outputLabel for="password" value="Password"/>
+                    <p:password id="password" value="#{authBean.password}" autocomplete="new-password"
+                                feedback="false" toggleMask="true"
+                                required="true" requiredMessage="Choose a password."
+                                validatorMessage="Password must be at least 4 characters.">
+                        <f:validateLength minimum="4"/>
+                    </p:password>
+                    <small class="tp-hint">At least 4 characters.</small>
+                    <p:message for="password" display="text"/>
+                </div>
+
+                <p:commandButton value="Create account" action="#{authBean.register}" update="@form :growl"
+                                 styleClass="tp-button-primary"/>
+
+                <p class="tp-form__switch">
+                    Already have an account? <h:link outcome="login" value="Log in"/>
+                </p>
+            </h:form>
+        </section>
+    </ui:define>
+</ui:composition>

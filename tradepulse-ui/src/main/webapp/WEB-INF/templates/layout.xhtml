@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="http://primefaces.org/ui"
+      lang="en">
+<f:view contentType="text/html" locale="en_US">
+    <ui:insert name="metadata"/>
+    <h:head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title><ui:insert name="title">TradePulse</ui:insert> | TradePulse</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com"/>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+        <link rel="stylesheet"
+              href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap"/>
+        <h:outputStylesheet name="css/app.css"/>
+    </h:head>
+    <h:body styleClass="tp-body">
+        <a class="tp-skip-link" href="#main">Skip to main content</a>
+
+        <p:growl id="growl" globalOnly="true" life="6000" skipDetailIfEqualsSummary="true"/>
+
+        <ui:fragment rendered="#{userSession.loggedIn}">
+            <header class="tp-header">
+                <h:form id="headerForm" styleClass="tp-header__inner">
+                    <h:link outcome="market" styleClass="tp-brand" value="TradePulse"/>
+                    <nav class="tp-nav" aria-label="Main">
+                        <h:link outcome="market" value="Market" styleClass="tp-nav__link"/>
+                    </nav>
+                    <div class="tp-account">
+                        <span class="tp-account__user">#{userSession.username}</span>
+                        <h:panelGroup id="balance" styleClass="tp-account__balance">
+                            <span class="tp-visually-hidden">Wallet balance:</span>
+                            <h:outputText value="#{userSession.balance}">
+                                <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
+                            </h:outputText>
+                        </h:panelGroup>
+                        <p:commandButton value="Log out" icon="pi pi-sign-out" action="#{authBean.logout}"
+                                         ajax="false" styleClass="ui-button-outlined tp-button-quiet"/>
+                    </div>
+                </h:form>
+            </header>
+        </ui:fragment>
+
+        <main id="main" class="tp-main">
+            <ui:insert name="content"/>
+        </main>
+    </h:body>
+</f:view>
+</html>
