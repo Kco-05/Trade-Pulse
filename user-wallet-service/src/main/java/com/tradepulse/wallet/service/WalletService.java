@@ -4,6 +4,7 @@ import com.tradepulse.wallet.dto.BalanceResponse;
 import com.tradepulse.wallet.exception.ConflictException;
 import com.tradepulse.wallet.exception.InvalidAmountException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +41,11 @@ public class WalletService {
     }
 
     private static void validateAmount(BigDecimal amount) {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+        if (amount == null) {
+            throw new InvalidAmountException();
+        }
+        BigDecimal scaled = amount.setScale(2, RoundingMode.HALF_UP);
+        if (scaled.compareTo(BigDecimal.ZERO) <= 0) {
             throw new InvalidAmountException();
         }
     }

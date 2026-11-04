@@ -62,6 +62,7 @@ public class TradeService {
         int quantity = request.quantity();
         String ticker = request.tickerSymbol().trim().toUpperCase(Locale.ROOT);
 
+        walletApiClient.getBalance(userId);
         BigDecimal price = marketApiClient.getPrice(ticker).currentPrice();
 
         Portfolio holding = portfolioRepository.findByUserIdAndTickerSymbol(userId, ticker)

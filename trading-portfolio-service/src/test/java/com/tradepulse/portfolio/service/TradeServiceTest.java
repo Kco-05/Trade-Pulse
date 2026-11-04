@@ -95,6 +95,8 @@ class TradeServiceTest {
 
     @Test
     void sellOversellingThrowsInsufficientHoldings() {
+        when(walletApiClient.getBalance(USER_ID))
+                .thenReturn(new WalletBalanceResponse(USER_ID, new BigDecimal("100000.00")));
         Portfolio holding = new Portfolio(USER_ID, "AAPL", 2, new BigDecimal("100.00"));
         when(portfolioRepository.findByUserIdAndTickerSymbol(USER_ID, "AAPL"))
                 .thenReturn(Optional.of(holding));
@@ -103,6 +105,7 @@ class TradeServiceTest {
                 () -> tradeService.sell(new TradeRequest(USER_ID, "AAPL", 3)));
 
         assertEquals("Insufficient holdings", ex.getMessage());
+        verify(walletApiClient).getBalance(USER_ID);
         verify(tradeRecorder, never()).recordSell(anyLong(), anyString(), anyInt(), any());
         verify(walletApiClient, never()).credit(anyLong(), any());
     }
