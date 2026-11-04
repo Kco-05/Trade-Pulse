@@ -25,11 +25,12 @@
                     <p:column headerText="ID" styleClass="tp-col-numeric">
                         <h:outputText value="#{tx.transactionId}"/>
                     </p:column>
-                    <p:column headerText="Ticker">
+                    <p:column headerText="Ticker" styleClass="tp-col-ticker">
                         <h:outputText value="#{tx.tickerSymbol}"/>
                     </p:column>
                     <p:column headerText="Type">
-                        <h:outputText value="#{tx.transactionType}"/>
+                        <h:outputText value="#{tx.transactionType}"
+                                      styleClass="tp-badge #{tx.transactionType eq 'BUY' ? 'tp-badge--buy' : 'tp-badge--sell'}"/>
                     </p:column>
                     <p:column headerText="Quantity" styleClass="tp-col-numeric">
                         <h:outputText value="#{tx.quantity}"/>

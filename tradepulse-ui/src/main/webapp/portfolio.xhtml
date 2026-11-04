@@ -22,7 +22,7 @@
                 <p:dataTable id="holdingsTable" value="#{portfolioBean.holdings}" var="holding"
                              emptyMessage="No holdings yet. Buy stocks on the Market page."
                              styleClass="tp-table" rowKey="#{holding.tickerSymbol}">
-                    <p:column headerText="Ticker">
+                    <p:column headerText="Ticker" styleClass="tp-col-ticker">
                         <h:outputText value="#{holding.tickerSymbol}"/>
                     </p:column>
                     <p:column headerText="Quantity" styleClass="tp-col-numeric">

@@ -10,6 +10,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import org.primefaces.PrimeFaces;
 
 @Named
 @ViewScoped
@@ -62,6 +63,7 @@ public class TradeBean implements Serializable {
                     ? "Bought " + quantity + " " + tickerSymbol + " at $" + receipt.executionPrice()
                     : "Sold " + quantity + " " + tickerSymbol + " at $" + receipt.executionPrice());
             close();
+            PrimeFaces.current().ajax().addCallbackParam("tradeCompleted", true);
         } catch (ApiException e) {
             FacesMessages.error(e.getMessage() == null || e.getMessage().isBlank()
                     ? "Trade failed (" + e.getStatus() + ")"

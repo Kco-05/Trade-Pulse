@@ -192,46 +192,108 @@ a:hover {
 /* Pages with tables */
 .tp-page {
     display: grid;
-    gap: var(--tp-space-4);
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--tp-space-2);
+}
+
+.tp-page .tp-heading {
+    margin: 0;
 }
 
 .tp-page__body {
-    margin-top: var(--tp-space-2);
+    margin-top: var(--tp-space-4);
 }
 
 .tp-body .tp-table.ui-datatable {
     width: 100%;
+    background: var(--tp-color-surface);
+    border: 1px solid var(--tp-color-border);
+    border-radius: var(--tp-radius);
+    box-shadow: var(--tp-shadow);
+    overflow: hidden;
 }
 
-.tp-body .tp-table .ui-datatable-data td,
-.tp-body .tp-table .ui-datatable-header,
-.tp-body .tp-table th {
+/* Size columns to their content and scroll inside the card on narrow screens instead of clipping. */
+.tp-body .tp-table .ui-datatable-tablewrapper {
+    overflow-x: auto;
+}
+
+.tp-body .tp-table table {
+    table-layout: auto;
+}
+
+.tp-body .tp-table th,
+.tp-body .tp-table td {
     border-color: var(--tp-color-border);
+    border-left: 0;
+    border-right: 0;
+    padding: var(--tp-space-3) var(--tp-space-4);
+    white-space: nowrap;
+}
+
+.tp-body .tp-table .ui-datatable-data > tr:last-child > td {
+    border-bottom: 0;
+}
+
+.tp-body .tp-table .ui-datatable-data > tr:hover > td {
+    background: var(--tp-color-background);
 }
 
 .tp-body .tp-table th {
     background: var(--tp-color-surface);
     color: var(--tp-color-muted);
-    font-size: var(--tp-text-sm);
+    font-size: var(--tp-text-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.tp-body .tp-table tfoot td {
+    border-top: 1px solid var(--tp-color-border);
+    background: var(--tp-color-background);
+    color: var(--tp-color-text);
     font-weight: 600;
 }
 
-.tp-col-numeric {
+/* Higher specificity than the theme's text-align: left on th and tfoot cells. */
+.tp-body .tp-table .tp-col-numeric {
     text-align: right;
     font-variant-numeric: tabular-nums;
 }
 
-.tp-col-actions {
-    white-space: nowrap;
-}
-
-.tp-col-actions .ui-button {
-    margin-right: var(--tp-space-2);
-}
-
-.tp-col-footer-label {
+.tp-body .tp-table .tp-col-footer-label {
     text-align: right;
+}
+
+.tp-col-ticker {
     font-weight: 600;
+}
+
+.tp-body .tp-table .tp-col-actions {
+    width: 1%;
+    text-align: right;
+}
+
+.tp-col-actions .ui-button + .ui-button {
+    margin-left: var(--tp-space-2);
+}
+
+.tp-badge {
+    display: inline-block;
+    padding: 0 var(--tp-space-2);
+    border: 1px solid currentColor;
+    border-radius: var(--tp-radius);
+    font-size: var(--tp-text-xs);
+    font-weight: 600;
+    line-height: 1.5rem;
+}
+
+.tp-badge--buy {
+    color: var(--tp-color-success);
+}
+
+.tp-badge--sell {
+    color: var(--tp-color-danger);
 }
 
 .tp-pl-positive {
@@ -250,9 +312,46 @@ a:hover {
     min-width: min(18rem, 100%);
 }
 
-.tp-body .ui-button.tp-button-dialog {
+.tp-dialog .ui-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--tp-space-2);
+}
+
+.tp-body .tp-dialog .ui-button.tp-button-dialog {
     width: auto;
-    margin-left: var(--tp-space-2);
+}
+
+.tp-trade-messages:empty {
+    display: none;
+}
+
+.tp-body .tp-dialog .ui-spinner {
+    display: flex;
+    width: 100%;
+}
+
+.tp-body .tp-dialog .ui-spinner-input {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+}
+
+.tp-body .tp-dialog .ui-spinner .ui-spinner-input.ui-state-focus {
+    border-color: var(--tp-color-primary);
+    box-shadow: 0 0 0 2px var(--tp-color-surface), 0 0 0 4px var(--tp-color-focus);
+}
+
+.tp-body .tp-dialog .ui-spinner .ui-button.tp-spinner-button {
+    width: var(--tp-touch-target);
+    background: var(--tp-color-surface);
+    border-color: var(--tp-color-border);
+    color: var(--tp-color-text);
+}
+
+.tp-body .tp-dialog .ui-spinner .ui-button.tp-spinner-button:enabled:hover {
+    background: var(--tp-color-background);
+    color: var(--tp-color-text);
 }
 
 /* Growl must sit above PrimeFaces modal overlays during trade dialogs. */
@@ -266,6 +365,23 @@ a:hover {
 
 .tp-trade-messages.ui-messages {
     border-radius: var(--tp-radius);
+}
+
+.tp-trade-messages .ui-messages-error {
+    display: flex;
+    align-items: center;
+    gap: var(--tp-space-2);
+    margin: 0;
+    padding: var(--tp-space-3) var(--tp-space-4);
+}
+
+.tp-trade-messages .ui-messages-error-icon {
+    margin: 0;
+}
+
+.tp-trade-messages ul {
+    margin: 0;
+    padding: 0;
 }
 
 .tp-card {

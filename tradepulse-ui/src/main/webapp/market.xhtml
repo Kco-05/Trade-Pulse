@@ -23,7 +23,7 @@
                     <p:dataTable id="stockTable" value="#{marketBean.stocks}" var="stock"
                                  emptyMessage="No stocks available." styleClass="tp-table"
                                  rowKey="#{stock.tickerSymbol}">
-                        <p:column headerText="Ticker">
+                        <p:column headerText="Ticker" styleClass="tp-col-ticker">
                             <h:outputText value="#{stock.tickerSymbol}"/>
                         </p:column>
                         <p:column headerText="Company">
@@ -60,8 +60,8 @@
                           styleClass="tp-dialog"
                           onHide="PF('marketPoll').start()">
                     <div class="tp-trade-dialog">
-                        <p:messages id="tradeMessages" globalOnly="true" showDetail="false"
-                                    closable="true" styleClass="tp-trade-messages"/>
+                        <p:messages id="tradeMessages" globalOnly="true" showDetail="false" severity="error"
+                                    styleClass="tp-trade-messages"/>
                         <p class="tp-muted">
                             <h:outputText value="#{tradeBean.companyName}"/>
                             —
@@ -72,7 +72,8 @@
                         <div class="tp-field">
                             <p:outputLabel for="quantity" value="Quantity"/>
                             <p:spinner id="quantity" value="#{tradeBean.quantity}"
-                                       min="1" max="10000" rotate="false"
+                                       min="1" max="10000" rotate="false" buttons="horizontal"
+                                       upButtonStyleClass="tp-spinner-button" downButtonStyleClass="tp-spinner-button"
                                        decimalPlaces="0" thousandSeparator=""/>
                             <p:message id="quantityMsg" for="quantity" display="text"/>
                         </div>
@@ -87,7 +88,7 @@
                                          action="#{tradeBean.confirm}"
                                          update=":growl :headerForm:balance tradeMessages quantityMsg"
                                          process="@this :marketForm:quantity"
-                                         oncomplete="if (!#{tradeBean.dialogVisible}) { PF('tradeDialog').hide(); }"/>
+                                         oncomplete="if (args &amp;&amp; args.tradeCompleted) { PF('tradeDialog').hide(); }"/>
                     </f:facet>
                 </p:dialog>
             </h:form>
