@@ -17,10 +17,14 @@ import com.tradepulse.portfolio.dto.StockPriceResponse;
 import com.tradepulse.portfolio.dto.TradeRequest;
 import com.tradepulse.portfolio.dto.TradeResponse;
 import com.tradepulse.portfolio.dto.WalletBalanceResponse;
+import com.tradepulse.portfolio.entity.Portfolio;
 import com.tradepulse.portfolio.entity.Transaction;
 import com.tradepulse.portfolio.exception.DownstreamException;
+import com.tradepulse.portfolio.exception.InsufficientHoldingsException;
 import com.tradepulse.portfolio.exception.TradeFailedException;
+import com.tradepulse.portfolio.repository.PortfolioRepository;
 import java.math.BigDecimal;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -34,6 +38,7 @@ class TradeServiceTest {
     private MarketApiClient marketApiClient;
     private WalletApiClient walletApiClient;
     private TradeRecorder tradeRecorder;
+    private PortfolioRepository portfolioRepository;
     private TradeService tradeService;
 
     @BeforeEach
@@ -41,7 +46,8 @@ class TradeServiceTest {
         marketApiClient = mock(MarketApiClient.class);
         walletApiClient = mock(WalletApiClient.class);
         tradeRecorder = mock(TradeRecorder.class);
-        tradeService = new TradeService(marketApiClient, walletApiClient, tradeRecorder);
+        portfolioRepository = mock(PortfolioRepository.class);
+        tradeService = new TradeService(marketApiClient, walletApiClient, tradeRecorder, portfolioRepository);
         when(marketApiClient.getPrice("AAPL")).thenReturn(new StockPriceResponse("AAPL", PRICE));
     }
 
@@ -84,6 +90,20 @@ class TradeServiceTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
         verify(tradeRecorder, never()).recordBuy(anyLong(), anyString(), anyInt(), any());
+        verify(walletApiClient, never()).credit(anyLong(), any());
+    }
+
+    @Test
+    void sellOversellingThrowsInsufficientHoldings() {
+        Portfolio holding = new Portfolio(USER_ID, "AAPL", 2, new BigDecimal("100.00"));
+        when(portfolioRepository.findByUserIdAndTickerSymbol(USER_ID, "AAPL"))
+                .thenReturn(Optional.of(holding));
+
+        InsufficientHoldingsException ex = assertThrows(InsufficientHoldingsException.class,
+                () -> tradeService.sell(new TradeRequest(USER_ID, "AAPL", 3)));
+
+        assertEquals("Insufficient holdings", ex.getMessage());
+        verify(tradeRecorder, never()).recordSell(anyLong(), anyString(), anyInt(), any());
         verify(walletApiClient, never()).credit(anyLong(), any());
     }
 }

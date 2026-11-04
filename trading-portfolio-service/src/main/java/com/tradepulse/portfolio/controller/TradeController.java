@@ -31,6 +31,11 @@ public class TradeController {
         return tradeService.buy(request);
     }
 
+    @PostMapping("/sell")
+    public TradeResponse sell(@Valid @RequestBody TradeRequest request) {
+        return tradeService.sell(request);
+    }
+
     @GetMapping("/history/{userId}")
     public List<TransactionHistoryResponse> history(@PathVariable("userId") Long userId) {
         return portfolioService.getHistory(userId);
