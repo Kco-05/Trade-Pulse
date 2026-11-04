@@ -1,6 +1,7 @@
 target/
-*.class
+data/
 .idea/
+.vscode/
+*.class
 *.iml
 .ds_store
-data/
