@@ -15,49 +15,101 @@
 
     <ui:define name="content">
         <section class="tp-page" aria-labelledby="portfolioHeading">
-            <h1 id="portfolioHeading" class="tp-heading">Portfolio</h1>
-            <p class="tp-muted">Your holdings and unrealized profit or loss.</p>
+            <div class="tp-page__header">
+                <h1 id="portfolioHeading" class="tp-heading">My Portfolio</h1>
+                <p class="tp-muted">Your active holdings and unrealized profit or loss.</p>
+            </div>
+
+            <!-- Summary Metric Cards -->
+            <div class="tp-stats-bar">
+                <div class="tp-stat-card">
+                    <div class="tp-stat-card__label">Total Invested</div>
+                    <div class="tp-stat-card__value">
+                        <h:outputText value="#{portfolioBean.totalInvested}">
+                            <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
+                        </h:outputText>
+                    </div>
+                    <div class="tp-stat-card__sub">Cost Basis</div>
+                </div>
+
+                <div class="tp-stat-card">
+                    <div class="tp-stat-card__label">Current Value</div>
+                    <div class="tp-stat-card__value">
+                        <h:outputText value="#{portfolioBean.currentValue}">
+                            <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
+                        </h:outputText>
+                    </div>
+                    <div class="tp-stat-card__sub">Market Valuation</div>
+                </div>
+
+                <div class="tp-stat-card">
+                    <div class="tp-stat-card__label">Overall P/L</div>
+                    <div class="tp-stat-card__value #{portfolioBean.totalProfitLoss.signum() &gt;= 0 ? 'tp-pl-positive' : 'tp-pl-negative'}">
+                        <h:outputText value="#{portfolioBean.totalProfitLoss}">
+                            <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
+                        </h:outputText>
+                    </div>
+                    <div class="tp-stat-card__sub #{portfolioBean.totalProfitLoss.signum() &gt;= 0 ? 'tp-pl-positive' : 'tp-pl-negative'}">
+                        #{portfolioBean.totalProfitLoss.signum() &gt;= 0 ? 'Net Unrealized Gain' : 'Net Unrealized Loss'}
+                    </div>
+                </div>
+            </div>
 
             <h:form id="portfolioForm" styleClass="tp-page__body">
-                <p:dataTable id="holdingsTable" value="#{portfolioBean.holdings}" var="holding"
-                             emptyMessage="No holdings yet. Buy stocks on the Market page."
-                             styleClass="tp-table" rowKey="#{holding.tickerSymbol}">
-                    <p:column headerText="Ticker" styleClass="tp-col-ticker">
-                        <h:outputText value="#{holding.tickerSymbol}"/>
-                    </p:column>
-                    <p:column headerText="Quantity" styleClass="tp-col-numeric">
-                        <h:outputText value="#{holding.totalQuantity}"/>
-                    </p:column>
-                    <p:column headerText="Avg buy" styleClass="tp-col-numeric">
-                        <h:outputText value="#{holding.averageBuyPrice}">
-                            <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
-                        </h:outputText>
-                    </p:column>
-                    <p:column headerText="Market price" styleClass="tp-col-numeric">
-                        <h:outputText value="#{holding.currentMarketPrice}">
-                            <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
-                        </h:outputText>
-                    </p:column>
-                    <p:column headerText="Profit / loss" styleClass="tp-col-numeric">
-                        <h:outputText value="#{holding.profitLoss}"
-                                      styleClass="#{holding.profitLoss.signum() &gt;= 0 ? 'tp-pl-positive' : 'tp-pl-negative'}">
-                            <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
-                        </h:outputText>
-                    </p:column>
-                    <p:columnGroup type="footer">
-                        <p:row>
-                            <p:column colspan="4" footerText="Total P/L" styleClass="tp-col-footer-label"/>
-                            <p:column styleClass="tp-col-numeric">
-                                <f:facet name="footer">
-                                    <h:outputText value="#{portfolioBean.totalProfitLoss}"
-                                                  styleClass="#{portfolioBean.totalProfitLoss.signum() &gt;= 0 ? 'tp-pl-positive' : 'tp-pl-negative'}">
-                                        <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
-                                    </h:outputText>
-                                </f:facet>
-                            </p:column>
-                        </p:row>
-                    </p:columnGroup>
-                </p:dataTable>
+
+                <!-- Empty-State Message When No Holdings Exist -->
+                <ui:fragment rendered="#{empty portfolioBean.holdings}">
+                    <div class="tp-empty-state">
+                        <div class="tp-empty-state__icon">&#128200;</div>
+                        <h2 class="tp-empty-state__title">No Holdings Yet</h2>
+                        <p class="tp-empty-state__text">
+                            No holdings yet. Buy stocks on the Market page to build your trading portfolio.
+                        </p>
+                        <h:link outcome="market" value="Explore Live Market" styleClass="tp-btn tp-btn--primary"/>
+                    </div>
+                </ui:fragment>
+
+                <!-- Holdings Table When Holdings Exist -->
+                <ui:fragment rendered="#{not empty portfolioBean.holdings}">
+                    <p:dataTable id="holdingsTable" value="#{portfolioBean.holdings}" var="holding"
+                                 styleClass="tp-table" rowKey="#{holding.tickerSymbol}">
+                        <p:column headerText="Ticker" styleClass="tp-col-ticker">
+                            <h:outputText value="#{holding.tickerSymbol}"/>
+                        </p:column>
+                        <p:column headerText="Quantity" styleClass="tp-col-numeric">
+                            <h:outputText value="#{holding.totalQuantity}"/>
+                        </p:column>
+                        <p:column headerText="Avg Buy" styleClass="tp-col-numeric">
+                            <h:outputText value="#{holding.averageBuyPrice}">
+                                <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Market Price" styleClass="tp-col-numeric">
+                            <h:outputText value="#{holding.currentMarketPrice}">
+                                <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Profit / Loss" styleClass="tp-col-numeric">
+                            <h:outputText value="#{holding.profitLoss}"
+                                          styleClass="#{holding.profitLoss.signum() &gt;= 0 ? 'tp-pl-positive' : 'tp-pl-negative'}">
+                                <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:columnGroup type="footer">
+                            <p:row>
+                                <p:column colspan="4" footerText="Total P/L" styleClass="tp-col-footer-label"/>
+                                <p:column styleClass="tp-col-numeric">
+                                    <f:facet name="footer">
+                                        <h:outputText value="#{portfolioBean.totalProfitLoss}"
+                                                      styleClass="#{portfolioBean.totalProfitLoss.signum() &gt;= 0 ? 'tp-pl-positive' : 'tp-pl-negative'}">
+                                            <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
+                                        </h:outputText>
+                                    </f:facet>
+                                </p:column>
+                            </p:row>
+                        </p:columnGroup>
+                    </p:dataTable>
+                </ui:fragment>
             </h:form>
         </section>
     </ui:define>

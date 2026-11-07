@@ -11,15 +11,130 @@
         </f:metadata>
     </ui:define>
 
-    <ui:define name="title">Market</ui:define>
+    <ui:define name="title">Live Market</ui:define>
+
+    <ui:define name="header">
+        <header class="tp-navbar">
+            <div class="tp-navbar__inner">
+                <div class="tp-navbar__brand-group">
+                    <h:link outcome="market" styleClass="tp-brand" value="TradePulse"/>
+                </div>
+
+                <nav class="tp-nav" aria-label="Main Navigation">
+                    <h:link outcome="market" value="Live Market" styleClass="tp-nav__link tp-nav__link--active"/>
+
+                    <ui:fragment rendered="#{userSession.loggedIn}">
+                        <h:link outcome="portfolio" value="My Portfolio" styleClass="tp-nav__link"/>
+                        <h:link outcome="history" value="Trade History" styleClass="tp-nav__link"/>
+                    </ui:fragment>
+
+                    <ui:fragment rendered="#{!userSession.loggedIn}">
+                        <h:link outcome="portfolio" value="My Portfolio [Lock for guests]"
+                                styleClass="tp-nav__link tp-nav__link--locked"
+                                title="Login required to view portfolio"/>
+                        <h:link outcome="history" value="Trade History [Lock for guests]"
+                                styleClass="tp-nav__link tp-nav__link--locked"
+                                title="Login required to view history"/>
+                    </ui:fragment>
+                </nav>
+
+                <div class="tp-account">
+                    <ui:fragment rendered="#{userSession.loggedIn}">
+                        <span class="tp-account__user">#{userSession.username}</span>
+                        <h:panelGroup id="navBalance" styleClass="tp-account__balance">
+                            <span class="tp-visually-hidden">Wallet balance:</span>
+                            <h:outputText value="#{userSession.balance}">
+                                <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
+                            </h:outputText>
+                        </h:panelGroup>
+                        <p:commandButton value="Log out" icon="pi pi-sign-out" action="#{authBean.logout}"
+                                         ajax="false" styleClass="ui-button-outlined tp-button-quiet"/>
+                    </ui:fragment>
+
+                    <ui:fragment rendered="#{!userSession.loggedIn}">
+                        <h:link outcome="login" value="Sign In" styleClass="tp-btn tp-btn--outline"/>
+                        <h:link outcome="register" value="Create Account" styleClass="tp-btn tp-btn--primary"/>
+                    </ui:fragment>
+                </div>
+            </div>
+        </header>
+    </ui:define>
 
     <ui:define name="content">
         <section class="tp-page" aria-labelledby="marketHeading">
-            <h1 id="marketHeading" class="tp-heading">Market</h1>
-            <p class="tp-muted">Live prices refresh every 5 seconds.</p>
+            <h1 id="marketHeading" class="tp-visually-hidden">Live Market</h1>
+
+            <!-- Hero / Guest Notification Strip -->
+            <ui:fragment rendered="#{!userSession.loggedIn}">
+                <div class="tp-guest-strip">
+                    <div class="tp-guest-strip__content">
+                        <span class="tp-guest-strip__icon">&#9889;</span>
+                        <span class="tp-guest-strip__text">
+                            <strong>Guest Mode</strong> - Login to start trading with $100,000 virtual cash
+                        </span>
+                    </div>
+                    <div class="tp-guest-strip__actions">
+                        <h:link outcome="login" value="Sign In" styleClass="tp-guest-strip__btn tp-guest-strip__btn--primary"/>
+                        <h:link outcome="register" value="Create Account" styleClass="tp-guest-strip__btn tp-guest-strip__btn--secondary"/>
+                    </div>
+                </div>
+            </ui:fragment>
 
             <h:form id="marketForm" styleClass="tp-page__body">
-                <p:outputPanel id="stockPanel" layout="block">
+
+                <!-- Polled Container: Contains ONLY stats, fallback notice, and table -->
+                <p:outputPanel id="stockContainer" layout="block">
+
+                    <!-- Fallback Notice for Backend Disconnections -->
+                    <ui:fragment rendered="#{marketBean.marketUnavailable}">
+                        <div class="tp-fallback-panel">
+                            <div class="tp-fallback-panel__icon">&#9888;</div>
+                            <div class="tp-fallback-panel__content">
+                                <h3 class="tp-fallback-panel__title">Market Service Notice</h3>
+                                <p class="tp-fallback-panel__message">Market data temporarily unavailable, retrying...</p>
+                            </div>
+                        </div>
+                    </ui:fragment>
+
+                    <!-- Stats Bar -->
+                    <div class="tp-stats-bar">
+                        <div class="tp-stat-card">
+                            <div class="tp-stat-card__header">
+                                <span class="tp-stat-card__label">Market Status</span>
+                                <span class="tp-live-badge"><span class="tp-live-dot"></span>LIVE</span>
+                            </div>
+                            <div class="tp-stat-card__value">Real-Time</div>
+                            <div class="tp-stat-card__sub">Polls every 5s</div>
+                        </div>
+
+                        <div class="tp-stat-card">
+                            <div class="tp-stat-card__label">Total Stocks Listed</div>
+                            <div class="tp-stat-card__value">#{marketBean.stocks.size()}</div>
+                            <div class="tp-stat-card__sub">Active Equities</div>
+                        </div>
+
+                        <div class="tp-stat-card">
+                            <div class="tp-stat-card__label">Top Gainer</div>
+                            <div class="tp-stat-card__value tp-pl-positive">
+                                <h:outputText value="#{marketBean.topGainer}"/>
+                            </div>
+                            <div class="tp-stat-card__sub tp-pl-positive">
+                                <h:outputText value="#{marketBean.topGainerChange}"/>
+                            </div>
+                        </div>
+
+                        <div class="tp-stat-card">
+                            <div class="tp-stat-card__label">Top Loser</div>
+                            <div class="tp-stat-card__value tp-pl-negative">
+                                <h:outputText value="#{marketBean.topLoser}"/>
+                            </div>
+                            <div class="tp-stat-card__sub tp-pl-negative">
+                                <h:outputText value="#{marketBean.topLoserChange}"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stock DataTable -->
                     <p:dataTable id="stockTable" value="#{marketBean.stocks}" var="stock"
                                  emptyMessage="No stocks available." styleClass="tp-table"
                                  rowKey="#{stock.tickerSymbol}">
@@ -30,28 +145,35 @@
                             <h:outputText value="#{stock.companyName}"/>
                         </p:column>
                         <p:column headerText="Price" styleClass="tp-col-numeric">
-                            <h:outputText value="#{stock.currentPrice}">
+                            <h:outputText value="#{stock.currentPrice}" styleClass="tp-live-price">
                                 <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
                             </h:outputText>
+                        </p:column>
+                        <p:column headerText="Change" styleClass="tp-col-numeric">
+                            <span class="tp-change-badge #{marketBean.priceChangeClasses[stock.tickerSymbol]}">
+                                <h:outputText value="#{marketBean.priceChangeIndicators[stock.tickerSymbol]}"/>
+                            </span>
                         </p:column>
                         <p:column headerText="Actions" styleClass="tp-col-actions">
                             <p:commandButton value="Buy" styleClass="tp-button-quiet"
                                              action="#{tradeBean.openBuy(stock)}"
                                              update=":marketForm:tradeDialog"
-                                             oncomplete="PF('marketPoll').stop(); PF('tradeDialog').show()"
+                                             oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('marketPoll').stop(); PF('tradeDialog').show(); }"
                                              process="@this"/>
                             <p:commandButton value="Sell" styleClass="tp-button-quiet"
                                              action="#{tradeBean.openSell(stock)}"
                                              update=":marketForm:tradeDialog"
-                                             oncomplete="PF('marketPoll').stop(); PF('tradeDialog').show()"
+                                             oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('marketPoll').stop(); PF('tradeDialog').show(); }"
                                              process="@this"/>
                         </p:column>
                     </p:dataTable>
                 </p:outputPanel>
 
+                <!-- 5s Poll updating ONLY the stock container -->
                 <p:poll widgetVar="marketPoll" interval="5"
-                        listener="#{marketBean.refresh}" update="stockPanel"/>
+                        listener="#{marketBean.refresh}" update="stockContainer"/>
 
+                <!-- Trade Dialog Modal: KEPT OUTSIDE stockContainer TO PREVENT INPUT RESETS -->
                 <p:dialog id="tradeDialog" widgetVar="tradeDialog"
                           header="#{tradeBean.dialogHeader}"
                           visible="#{tradeBean.dialogVisible}"
@@ -74,8 +196,16 @@
                             <p:spinner id="quantity" value="#{tradeBean.quantity}"
                                        min="1" max="10000" rotate="false" buttons="horizontal"
                                        upButtonStyleClass="tp-spinner-button" downButtonStyleClass="tp-spinner-button"
-                                       decimalPlaces="0" thousandSeparator=""/>
+                                       decimalPlaces="0" thousandSeparator="">
+                                <p:ajax event="change" update="dialogEstimatedTotal" process="@this"/>
+                            </p:spinner>
                             <p:message id="quantityMsg" for="quantity" display="text"/>
+                        </div>
+                        <div class="tp-field">
+                            <span class="tp-muted">Estimated Total:</span>
+                            <h:outputText id="dialogEstimatedTotal" value="#{tradeBean.estimatedTotal}" styleClass="tp-live-price">
+                                <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
+                            </h:outputText>
                         </div>
                     </div>
                     <f:facet name="footer">
@@ -86,7 +216,7 @@
                         <p:commandButton value="#{tradeBean.buyMode ? 'Confirm buy' : 'Confirm sell'}"
                                          styleClass="tp-button-primary tp-button-dialog"
                                          action="#{tradeBean.confirm}"
-                                         update=":growl :headerForm:balance tradeMessages quantityMsg"
+                                         update=":growl :marketForm:stockContainer tradeMessages quantityMsg"
                                          process="@this :marketForm:quantity"
                                          oncomplete="if (args &amp;&amp; args.tradeCompleted) { PF('tradeDialog').hide(); }"/>
                     </f:facet>

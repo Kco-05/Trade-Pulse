@@ -16,35 +16,38 @@
         <link rel="stylesheet"
               href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap"/>
         <h:outputStylesheet name="css/app.css"/>
+        <h:outputStylesheet name="css/tradepulse.css"/>
     </h:head>
     <h:body styleClass="tp-body">
         <a class="tp-skip-link" href="#main">Skip to main content</a>
 
         <p:growl id="growl" globalOnly="true" life="6000" skipDetailIfEqualsSummary="true"/>
 
-        <ui:fragment rendered="#{userSession.loggedIn}">
-            <header class="tp-header">
-                <h:form id="headerForm" styleClass="tp-header__inner">
-                    <h:link outcome="market" styleClass="tp-brand" value="TradePulse"/>
-                    <nav class="tp-nav" aria-label="Main">
-                        <h:link outcome="market" value="Market" styleClass="tp-nav__link"/>
-                        <h:link outcome="portfolio" value="Portfolio" styleClass="tp-nav__link"/>
-                        <h:link outcome="history" value="History" styleClass="tp-nav__link"/>
-                    </nav>
-                    <div class="tp-account">
-                        <span class="tp-account__user">#{userSession.username}</span>
-                        <h:panelGroup id="balance" styleClass="tp-account__balance">
-                            <span class="tp-visually-hidden">Wallet balance:</span>
-                            <h:outputText value="#{userSession.balance}">
-                                <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
-                            </h:outputText>
-                        </h:panelGroup>
-                        <p:commandButton value="Log out" icon="pi pi-sign-out" action="#{authBean.logout}"
-                                         ajax="false" styleClass="ui-button-outlined tp-button-quiet"/>
-                    </div>
-                </h:form>
-            </header>
-        </ui:fragment>
+        <ui:insert name="header">
+            <ui:fragment rendered="#{userSession.loggedIn}">
+                <header class="tp-header">
+                    <h:form id="headerForm" styleClass="tp-header__inner">
+                        <h:link outcome="market" styleClass="tp-brand" value="TradePulse"/>
+                        <nav class="tp-nav" aria-label="Main">
+                            <h:link outcome="market" value="Live Market" styleClass="tp-nav__link"/>
+                            <h:link outcome="portfolio" value="My Portfolio" styleClass="tp-nav__link"/>
+                            <h:link outcome="history" value="Trade History" styleClass="tp-nav__link"/>
+                        </nav>
+                        <div class="tp-account">
+                            <span class="tp-account__user">#{userSession.username}</span>
+                            <h:panelGroup id="balance" styleClass="tp-account__balance">
+                                <span class="tp-visually-hidden">Wallet balance:</span>
+                                <h:outputText value="#{userSession.balance}">
+                                    <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
+                                </h:outputText>
+                            </h:panelGroup>
+                            <p:commandButton value="Log out" icon="pi pi-sign-out" action="#{authBean.logout}"
+                                             ajax="false" styleClass="ui-button-outlined tp-button-quiet"/>
+                        </div>
+                    </h:form>
+                </header>
+            </ui:fragment>
+        </ui:insert>
 
         <main id="main" class="tp-main">
             <ui:insert name="content"/>

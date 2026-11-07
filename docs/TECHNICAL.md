@@ -77,7 +77,7 @@ Pages (Facelets .xhtml with a shared template layout.xhtml and PrimeFaces):
 - history.xhtml: transaction table.
 Beans: UserSession (@Named @SessionScoped, holds userId, username, balance; refreshBalance()), MarketBean, TradeBean, PortfolioBean, HistoryBean (@Named @ViewScoped; use jakarta.faces.view.ViewScoped), AuthBean.
 Clients: ApiClient (@ApplicationScoped) wrapping HttpClient + ObjectMapper, one small class per backend. Map JSON to local view-model records. Show errors with p:growl using the {"error"} message.
-Auth guard: a servlet Filter redirects to login.xhtml when UserSession has no userId (exclude login, register and jakarta.faces.resource).
+Auth guard: a servlet Filter redirects to login.xhtml when UserSession has no userId (approved spec amendment: guests may view the public market; only portfolio.xhtml and history.xhtml require authentication; unauthenticated guest access is permitted for /, market.xhtml, login.xhtml, register.xhtml, and paths containing jakarta.faces.resource without creating an unnecessary HTTP session).
 Header shows username and balance on every page, with Logout.
 No domain logic in beans beyond input shaping.
 

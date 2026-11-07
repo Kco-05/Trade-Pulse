@@ -9,6 +9,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,6 +24,8 @@ public class PortfolioBean implements Serializable {
 
     private List<HoldingView> holdings = List.of();
     private BigDecimal totalProfitLoss = BigDecimal.ZERO.setScale(2);
+    private BigDecimal totalInvested = BigDecimal.ZERO.setScale(2);
+    private BigDecimal currentValue = BigDecimal.ZERO.setScale(2);
 
     protected PortfolioBean() {
         this(null, null);
@@ -45,10 +48,20 @@ public class PortfolioBean implements Serializable {
             totalProfitLoss = holdings.stream()
                     .map(HoldingView::profitLoss)
                     .reduce(BigDecimal.ZERO, BigDecimal::add)
-                    .setScale(2, java.math.RoundingMode.HALF_UP);
+                    .setScale(2, RoundingMode.HALF_UP);
+            totalInvested = holdings.stream()
+                    .map(h -> h.averageBuyPrice().multiply(BigDecimal.valueOf(h.totalQuantity())))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add)
+                    .setScale(2, RoundingMode.HALF_UP);
+            currentValue = holdings.stream()
+                    .map(h -> h.currentMarketPrice().multiply(BigDecimal.valueOf(h.totalQuantity())))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add)
+                    .setScale(2, RoundingMode.HALF_UP);
         } catch (ApiException e) {
             holdings = Collections.emptyList();
             totalProfitLoss = BigDecimal.ZERO.setScale(2);
+            totalInvested = BigDecimal.ZERO.setScale(2);
+            currentValue = BigDecimal.ZERO.setScale(2);
             FacesMessages.error(e.getMessage());
         }
     }
@@ -59,5 +72,13 @@ public class PortfolioBean implements Serializable {
 
     public BigDecimal getTotalProfitLoss() {
         return totalProfitLoss;
+    }
+
+    public BigDecimal getTotalInvested() {
+        return totalInvested;
+    }
+
+    public BigDecimal getCurrentValue() {
+        return currentValue;
     }
 }

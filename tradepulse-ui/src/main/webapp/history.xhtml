@@ -11,42 +11,60 @@
         </f:metadata>
     </ui:define>
 
-    <ui:define name="title">History</ui:define>
+    <ui:define name="title">Trade History</ui:define>
 
     <ui:define name="content">
         <section class="tp-page" aria-labelledby="historyHeading">
-            <h1 id="historyHeading" class="tp-heading">Transaction history</h1>
-            <p class="tp-muted">Newest trades first.</p>
+            <div class="tp-page__header">
+                <h1 id="historyHeading" class="tp-heading">Transaction History</h1>
+                <p class="tp-muted">Chronological record of all executed trades (newest first).</p>
+            </div>
 
             <h:form id="historyForm" styleClass="tp-page__body">
-                <p:dataTable id="historyTable" value="#{historyBean.transactions}" var="tx"
-                             emptyMessage="No transactions yet."
-                             styleClass="tp-table" rowKey="#{tx.transactionId}">
-                    <p:column headerText="ID" styleClass="tp-col-numeric">
-                        <h:outputText value="#{tx.transactionId}"/>
-                    </p:column>
-                    <p:column headerText="Ticker" styleClass="tp-col-ticker">
-                        <h:outputText value="#{tx.tickerSymbol}"/>
-                    </p:column>
-                    <p:column headerText="Type">
-                        <h:outputText value="#{tx.transactionType}"
-                                      styleClass="tp-badge #{tx.transactionType eq 'BUY' ? 'tp-badge--buy' : 'tp-badge--sell'}"/>
-                    </p:column>
-                    <p:column headerText="Quantity" styleClass="tp-col-numeric">
-                        <h:outputText value="#{tx.quantity}"/>
-                    </p:column>
-                    <p:column headerText="Price" styleClass="tp-col-numeric">
-                        <h:outputText value="#{tx.executionPrice}">
-                            <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
-                        </h:outputText>
-                    </p:column>
-                    <p:column headerText="When">
-                        <h:outputText value="#{tx.timestamp}">
-                            <f:convertDateTime type="localDateTime" dateStyle="medium" timeStyle="short"
-                                               locale="en_US"/>
-                        </h:outputText>
-                    </p:column>
-                </p:dataTable>
+
+                <!-- Empty State When No Transactions Exist -->
+                <ui:fragment rendered="#{empty historyBean.transactions}">
+                    <div class="tp-empty-state">
+                        <div class="tp-empty-state__icon">&#128338;</div>
+                        <h2 class="tp-empty-state__title">No Transactions Yet</h2>
+                        <p class="tp-empty-state__text">
+                            No transactions yet. Complete your first buy or sell trade on the Live Market.
+                        </p>
+                        <h:link outcome="market" value="Go to Live Market" styleClass="tp-btn tp-btn--primary"/>
+                    </div>
+                </ui:fragment>
+
+                <!-- Transactions Table -->
+                <ui:fragment rendered="#{not empty historyBean.transactions}">
+                    <p:dataTable id="historyTable" value="#{historyBean.transactions}" var="tx"
+                                 styleClass="tp-table" rowKey="#{tx.transactionId}">
+                        <p:column headerText="ID" styleClass="tp-col-numeric">
+                            <h:outputText value="#{tx.transactionId}"/>
+                        </p:column>
+                        <p:column headerText="Ticker" styleClass="tp-col-ticker">
+                            <h:outputText value="#{tx.tickerSymbol}"/>
+                        </p:column>
+                        <p:column headerText="Type">
+                            <span class="tp-badge #{tx.transactionType eq 'BUY' ? 'tp-badge--buy' : 'tp-badge--sell'}">
+                                <h:outputText value="#{tx.transactionType}"/>
+                            </span>
+                        </p:column>
+                        <p:column headerText="Quantity" styleClass="tp-col-numeric">
+                            <h:outputText value="#{tx.quantity}"/>
+                        </p:column>
+                        <p:column headerText="Execution Price" styleClass="tp-col-numeric">
+                            <h:outputText value="#{tx.executionPrice}" styleClass="tp-live-price">
+                                <f:convertNumber type="currency" currencyCode="USD" locale="en_US"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="When">
+                            <h:outputText value="#{tx.timestamp}">
+                                <f:convertDateTime type="localDateTime" dateStyle="medium" timeStyle="short"
+                                                   locale="en_US"/>
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+                </ui:fragment>
             </h:form>
         </section>
     </ui:define>

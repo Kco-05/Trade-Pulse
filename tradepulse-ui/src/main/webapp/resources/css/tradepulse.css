@@ -1,0 +1,493 @@
+/* ==========================================================================
+   TradePulse Modern UI Stylesheet
+   - CSS Variables / Modern Palette
+   - Standard System Fonts (No CDN)
+   - Live Pulsing Dot Indicator
+   - Flash Transitions for Price Ticks
+   - Hero Guest Strip, Stats Cards, Badges, & Tables
+   ========================================================================== */
+
+:root {
+    /* Base & Dark Accents */
+    --tp-dark-900: #0f172a;
+    --tp-dark-800: #1e293b;
+    --tp-dark-700: #334155;
+    --tp-dark-accent: #0284c7;
+
+    /* Card & Surface */
+    --tp-card-bg: #ffffff;
+    --tp-card-border: #e2e8f0;
+    --tp-card-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+    --tp-card-shadow-hover: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+
+    /* Brand Primary (Teal) */
+    --tp-primary: #0f766e;
+    --tp-primary-hover: #115e59;
+    --tp-primary-light: #f0fdf4;
+    --tp-primary-focus: rgba(15, 118, 110, 0.25);
+
+    /* Gains: Emerald Green */
+    --tp-emerald: #10b981;
+    --tp-emerald-dark: #047857;
+    --tp-emerald-bg: #ecfdf5;
+    --tp-emerald-border: #a7f3d0;
+
+    /* Losses: Crimson Red */
+    --tp-crimson: #ef4444;
+    --tp-crimson-dark: #b91c1c;
+    --tp-crimson-bg: #fef2f2;
+    --tp-crimson-border: #fecaca;
+
+    /* Warning / Neutral */
+    --tp-amber: #f59e0b;
+    --tp-amber-bg: #fffbeb;
+    --tp-amber-border: #fde68a;
+
+    /* Neutral Text & Borders */
+    --tp-text-primary: #0f172a;
+    --tp-text-secondary: #475569;
+    --tp-text-muted: #64748b;
+    --tp-bg-subtle: #f8fafc;
+    --tp-border-subtle: #edf2f7;
+
+    /* Standard System Fonts */
+    --tp-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --tp-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+    /* Dimensions & Radii */
+    --tp-radius-sm: 6px;
+    --tp-radius-md: 10px;
+    --tp-radius-lg: 14px;
+    --tp-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --------------------------------------------------------------------------
+   Animations: Pulsing Dot & Flash Ticks
+   -------------------------------------------------------------------------- */
+@keyframes tp-pulse-glow {
+    0% {
+        transform: scale(0.9);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 7px rgba(16, 185, 129, 0);
+    }
+    100% {
+        transform: scale(0.9);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+.tp-live-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--tp-emerald);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    animation: tp-pulse-glow 1.8s infinite;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+.tp-live-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    background: var(--tp-emerald-bg);
+    border: 1px solid var(--tp-emerald-border);
+    border-radius: 9999px;
+    color: var(--tp-emerald-dark);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+@keyframes tp-flash-green {
+    0% { background-color: rgba(16, 185, 129, 0.3); }
+    100% { background-color: transparent; }
+}
+
+@keyframes tp-flash-red {
+    0% { background-color: rgba(239, 68, 68, 0.3); }
+    100% { background-color: transparent; }
+}
+
+.tp-flash-up {
+    animation: tp-flash-green 1.4s ease-out;
+}
+
+.tp-flash-down {
+    animation: tp-flash-red 1.4s ease-out;
+}
+
+/* --------------------------------------------------------------------------
+   Navbar Styles
+   -------------------------------------------------------------------------- */
+.tp-navbar {
+    background: var(--tp-card-bg);
+    border-bottom: 1px solid var(--tp-card-border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+}
+
+.tp-navbar__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 76rem;
+    margin: 0 auto;
+    padding: 0.75rem 1.5rem;
+    gap: 1rem;
+}
+
+.tp-navbar__brand-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.tp-navbar .tp-brand {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--tp-primary);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tp-navbar .tp-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tp-nav__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.5rem 0.85rem;
+    border-radius: var(--tp-radius-md);
+    color: var(--tp-text-secondary);
+    font-weight: 500;
+    font-size: 0.925rem;
+    text-decoration: none;
+    transition: var(--tp-transition);
+}
+
+.tp-nav__link:hover {
+    background: var(--tp-bg-subtle);
+    color: var(--tp-text-primary);
+}
+
+.tp-nav__link--active {
+    background: var(--tp-primary-light);
+    color: var(--tp-primary);
+    font-weight: 600;
+}
+
+.tp-nav__link--locked {
+    color: var(--tp-text-muted);
+}
+
+.tp-nav__lock {
+    font-size: 0.8rem;
+    opacity: 0.75;
+}
+
+.tp-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 1rem;
+    border-radius: var(--tp-radius-md);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--tp-transition);
+}
+
+.tp-btn--primary {
+    background: var(--tp-primary);
+    color: #ffffff;
+    border: 1px solid var(--tp-primary);
+}
+
+.tp-btn--primary:hover {
+    background: var(--tp-primary-hover);
+    color: #ffffff;
+}
+
+.tp-btn--outline {
+    background: transparent;
+    color: var(--tp-text-secondary);
+    border: 1px solid var(--tp-card-border);
+}
+
+.tp-btn--outline:hover {
+    background: var(--tp-bg-subtle);
+    color: var(--tp-text-primary);
+    border-color: var(--tp-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Hero / Guest Notification Strip
+   -------------------------------------------------------------------------- */
+.tp-guest-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-radius: var(--tp-radius-lg);
+    padding: 1.1rem 1.5rem;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+}
+
+.tp-guest-strip__content {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.tp-guest-strip__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--tp-radius-md);
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--tp-emerald);
+    font-size: 1.25rem;
+}
+
+.tp-guest-strip__text {
+    font-size: 0.95rem;
+    color: #e2e8f0;
+}
+
+.tp-guest-strip__text strong {
+    color: #ffffff;
+}
+
+.tp-guest-strip__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.tp-guest-strip__btn {
+    padding: 0.45rem 1rem;
+    border-radius: var(--tp-radius-md);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--tp-transition);
+}
+
+.tp-guest-strip__btn--primary {
+    background: var(--tp-emerald);
+    color: #ffffff;
+}
+
+.tp-guest-strip__btn--primary:hover {
+    background: #059669;
+}
+
+.tp-guest-strip__btn--secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tp-guest-strip__btn--secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* --------------------------------------------------------------------------
+   Stats Bar & Summary Metric Cards
+   -------------------------------------------------------------------------- */
+.tp-stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.tp-stat-card {
+    background: var(--tp-card-bg);
+    border: 1px solid var(--tp-card-border);
+    border-radius: var(--tp-radius-lg);
+    padding: 1.25rem;
+    box-shadow: var(--tp-card-shadow);
+    transition: var(--tp-transition);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.tp-stat-card:hover {
+    box-shadow: var(--tp-card-shadow-hover);
+    transform: translateY(-1px);
+}
+
+.tp-stat-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tp-stat-card__label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--tp-text-muted);
+}
+
+.tp-stat-card__value {
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: var(--tp-text-primary);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+}
+
+.tp-stat-card__sub {
+    font-size: 0.825rem;
+    color: var(--tp-text-muted);
+    font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   Badges: Gains, Losses, BUY / SELL
+   -------------------------------------------------------------------------- */
+.tp-change-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--tp-radius-sm);
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.tp-pl-positive,
+.tp-change-badge--up {
+    color: var(--tp-emerald-dark) !important;
+    background: var(--tp-emerald-bg);
+}
+
+.tp-pl-negative,
+.tp-change-badge--down {
+    color: var(--tp-crimson-dark) !important;
+    background: var(--tp-crimson-bg);
+}
+
+.tp-badge {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border-radius: var(--tp-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.tp-badge--buy {
+    background: var(--tp-emerald-bg);
+    color: var(--tp-emerald-dark);
+    border: 1px solid var(--tp-emerald-border);
+}
+
+.tp-badge--sell {
+    background: var(--tp-crimson-bg);
+    color: var(--tp-crimson-dark);
+    border: 1px solid var(--tp-crimson-border);
+}
+
+/* --------------------------------------------------------------------------
+   Fallback Error Panel & Empty State
+   -------------------------------------------------------------------------- */
+.tp-fallback-panel {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--tp-amber-bg);
+    border: 1px solid var(--tp-amber-border);
+    border-radius: var(--tp-radius-lg);
+    padding: 1.25rem 1.5rem;
+    color: #92400e;
+    margin-bottom: 1.5rem;
+}
+
+.tp-fallback-panel__icon {
+    font-size: 1.8rem;
+}
+
+.tp-fallback-panel__title {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.tp-fallback-panel__message {
+    margin: 0;
+    font-size: 0.925rem;
+}
+
+.tp-empty-state {
+    text-align: center;
+    padding: 3.5rem 1.5rem;
+    background: var(--tp-card-bg);
+    border: 1px dashed var(--tp-card-border);
+    border-radius: var(--tp-radius-lg);
+    margin-top: 1rem;
+}
+
+.tp-empty-state__icon {
+    font-size: 2.75rem;
+    margin-bottom: 0.75rem;
+    color: var(--tp-text-muted);
+}
+
+.tp-empty-state__title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--tp-text-primary);
+    margin: 0 0 0.5rem 0;
+}
+
+.tp-empty-state__text {
+    font-size: 0.95rem;
+    color: var(--tp-text-muted);
+    max-width: 28rem;
+    margin: 0 auto 1.5rem auto;
+}
+
+/* --------------------------------------------------------------------------
+   Table Polish
+   -------------------------------------------------------------------------- */
+.tp-body .tp-table.ui-datatable {
+    border-radius: var(--tp-radius-lg);
+    border: 1px solid var(--tp-card-border);
+    box-shadow: var(--tp-card-shadow);
+}
+
+.tp-live-price {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+

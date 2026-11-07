@@ -5,11 +5,16 @@ import com.tradepulse.ui.dto.StockView;
 import com.tradepulse.ui.dto.TradeReceipt;
 import com.tradepulse.ui.dto.TradeRequest;
 import com.tradepulse.ui.exception.ApiException;
+import jakarta.faces.FacesException;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import org.primefaces.PrimeFaces;
 
 @Named
@@ -49,6 +54,11 @@ public class TradeBean implements Serializable {
     }
 
     public void confirm() {
+        if (userSession == null || userSession.getUserId() == null) {
+            redirectToLoginWithNotice();
+            return;
+        }
+
         if (quantity < MIN_QUANTITY || quantity > MAX_QUANTITY) {
             FacesMessages.error("Quantity must be between 1 and 10000.");
             return;
@@ -76,6 +86,11 @@ public class TradeBean implements Serializable {
     }
 
     private void open(StockView stock, boolean buy) {
+        if (userSession == null || userSession.getUserId() == null) {
+            redirectToLoginWithNotice();
+            return;
+        }
+
         this.buyMode = buy;
         this.tickerSymbol = stock.tickerSymbol();
         this.companyName = stock.companyName();
@@ -84,9 +99,36 @@ public class TradeBean implements Serializable {
         this.dialogVisible = true;
     }
 
+    private void redirectToLoginWithNotice() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        facesContext.addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_WARN, "Please log in to execute trades", null));
+        facesContext.getExternalContext().getFlash().setKeepMessages(true);
+        try {
+            String contextPath = facesContext.getExternalContext().getRequestContextPath();
+            String loginUrl = (contextPath == null || contextPath.isEmpty() || "/".equals(contextPath))
+                    ? "/login.xhtml"
+                    : contextPath + "/login.xhtml";
+            facesContext.getExternalContext().redirect(loginUrl);
+        } catch (IOException e) {
+            throw new FacesException("Failed to redirect to login.xhtml", e);
+        }
+    }
+
     private void close() {
         dialogVisible = false;
         quantity = MIN_QUANTITY;
+    }
+
+    public BigDecimal getEstimatedTotal() {
+        if (currentPrice == null || quantity <= 0) {
+            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        }
+        return currentPrice.multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal getTotal() {
+        return getEstimatedTotal();
     }
 
     public boolean isDialogVisible() {
