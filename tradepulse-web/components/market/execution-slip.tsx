@@ -422,6 +422,7 @@ function ExecutionSlipForm({
           <p className="text-sm text-muted-foreground">Sign in to place trades</p>
           <Button
             render={<Link href="/login" />}
+            nativeButton={false}
             className="bg-emerald-400 text-zinc-950 hover:bg-emerald-400/90"
           >
             Log in to trade
@@ -445,7 +446,7 @@ export function ExecutionSlip({
       <Drawer showSwipeHandle>
         <DrawerTrigger
           className={cn(
-            "fixed right-4 bottom-4 z-40 inline-flex h-11 items-center justify-center rounded-lg bg-emerald-400 px-4 text-sm font-medium text-zinc-950 shadow-lg",
+            "fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 inline-flex h-11 items-center justify-center rounded-lg bg-emerald-400 px-4 text-sm font-medium text-zinc-950 shadow-lg",
             "focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
           )}
         >
@@ -458,7 +459,7 @@ export function ExecutionSlip({
               Market order at the live simulated price.
             </DrawerDescription>
           </DrawerHeader>
-          <div className="overflow-y-auto px-4 pb-6">
+          <div className="overflow-y-auto px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
             <ExecutionSlipForm
               key={`${selectedTicker ?? "none"}-${initialSide ?? "buy"}`}
               selectedTicker={selectedTicker}

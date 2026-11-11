@@ -59,7 +59,7 @@ export function MarketTable({
   });
 
   return (
-    <div className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50">
+    <div className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 [&_[data-slot=table-container]]:overflow-x-hidden">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -87,7 +87,7 @@ export function MarketTable({
                 colSpan={columns.length}
                 className="h-24 text-center text-muted-foreground"
               >
-                No stocks match your filters.
+                No results found
               </TableCell>
             </TableRow>
           ) : (

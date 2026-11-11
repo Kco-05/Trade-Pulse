@@ -27,6 +27,7 @@ export function MarketingNav() {
             size="sm"
             className="text-zinc-300 hover:text-zinc-50"
             render={<Link href="/market" />}
+            nativeButton={false}
           >
             Open market
           </Button>
@@ -35,6 +36,7 @@ export function MarketingNav() {
             size="sm"
             className="text-zinc-300 hover:text-zinc-50"
             render={<Link href="/login" />}
+            nativeButton={false}
           >
             Login
           </Button>
@@ -42,6 +44,7 @@ export function MarketingNav() {
             size="sm"
             className="bg-emerald-400 text-zinc-950 hover:bg-emerald-400/90"
             render={<Link href="/signup" />}
+            nativeButton={false}
           >
             Sign Up
           </Button>

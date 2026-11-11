@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -107,16 +108,18 @@ export function AppHeader() {
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="min-w-48">
-            <DropdownMenuLabel>
-              <div className="flex flex-col gap-0.5">
-                <span className="font-medium text-foreground">
-                  {username ?? "Account"}
-                </span>
-                <span className="text-xs font-normal text-muted-foreground">
-                  {userId != null ? `User #${userId}` : "Session loading…"}
-                </span>
-              </div>
-            </DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>
+                <div className="flex flex-col gap-0.5">
+                  <span className="font-medium text-foreground">
+                    {username ?? "Account"}
+                  </span>
+                  <span className="text-xs font-normal text-muted-foreground">
+                    {userId != null ? `User #${userId}` : "Session loading…"}
+                  </span>
+                </div>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive" onClick={handleLogout}>
               <LogOut />

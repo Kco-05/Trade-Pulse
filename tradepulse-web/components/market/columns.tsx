@@ -3,6 +3,7 @@
 import NumberFlow from "@number-flow/react";
 import { type ColumnDef } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, Minus } from "lucide-react";
+import type { CSSProperties } from "react";
 
 import { Sparkline } from "@/components/market/sparkline";
 import { WatchlistButton } from "@/components/market/watchlist-button";
@@ -92,17 +93,29 @@ export function createMarketColumns(
         </Button>
       ),
       cell: ({ row }) => (
-        <NumberFlow
-          value={row.original.currentPrice}
-          locales="en-US"
-          format={{
-            style: "currency",
-            currency: "USD",
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          }}
-          className="tabular-nums text-foreground"
-        />
+        // Fixed box so NumberFlow's digit-width tween cannot widen the table
+        // (which would flash the overflow-x scrollbar every 5s tick).
+        <span
+          className="inline-flex w-[8.5ch] justify-end overflow-hidden tabular-nums"
+          style={
+            {
+              "--number-flow-mask-width": "0.15em",
+            } as CSSProperties
+          }
+        >
+          <NumberFlow
+            value={row.original.currentPrice}
+            locales="en-US"
+            format={{
+              style: "currency",
+              currency: "USD",
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }}
+            className="tabular-nums text-foreground"
+            style={{ fontVariantNumeric: "tabular-nums" }}
+          />
+        </span>
       ),
     },
     {
@@ -140,7 +153,7 @@ export function createMarketColumns(
           <Badge
             variant="outline"
             className={cn(
-              "gap-1 tabular-nums",
+              "max-w-[12.5rem] gap-1 truncate tabular-nums",
               up &&
                 "border-emerald-400/30 bg-emerald-400/10 text-emerald-400",
               down && "border-rose-500/30 bg-rose-500/10 text-rose-500",
@@ -156,8 +169,13 @@ export function createMarketColumns(
     {
       id: "trend",
       header: "Trend",
-      cell: ({ row }) => <Sparkline history={row.original.history} />,
+      cell: ({ row }) => (
+        <div className="w-[100px] overflow-hidden">
+          <Sparkline history={row.original.history} />
+        </div>
+      ),
       enableSorting: false,
+      size: 116,
     },
   ];
 }

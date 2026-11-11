@@ -170,7 +170,7 @@ export function HistoryTable({ rows, isLoading }: HistoryTableProps) {
                     colSpan={columns.length}
                     className="h-24 text-center text-muted-foreground"
                   >
-                    No trades match your filters.
+                    No results found
                   </TableCell>
                 </TableRow>
               ) : (
