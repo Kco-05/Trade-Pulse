@@ -28,7 +28,7 @@ export function EmptyTradeCta({ title, description }: EmptyTradeCtaProps) {
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="flex justify-center pb-6">
-        <Button render={<Link href="/" />}>Make your first trade</Button>
+        <Button render={<Link href="/market" />}>Make your first trade</Button>
       </CardContent>
     </Card>
   );

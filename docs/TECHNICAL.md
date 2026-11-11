@@ -103,3 +103,11 @@ Proxying (next.config.js `rewrites`, no Spring CORS required):
 - `/api/trade/:path*` -> `http://localhost:8083/api/trade/:path*`
 - `/api/portfolio/:path*` -> `http://localhost:8083/api/portfolio/:path*`
 tradepulse-ui (JSF, §4.8) is retained as a fallback and must not be edited.
+
+Routes:
+| Path | Access | Notes |
+| --- | --- | --- |
+| `/` | Public | Landing page. Middleware redirects to `/market` when `tp_uid` is present. |
+| `/login`, `/signup` | Public | Auth forms (signup reuses the same card with Sign Up tab). |
+| `/market` | Public | Live market dashboard; trading controls locked when logged out. Deep links: `/market?ticker=AAPL`. |
+| `/portfolio`, `/history` | Protected | Require `tp_uid` cookie; otherwise redirect to `/login?next=...`. |

@@ -68,7 +68,7 @@ export function SignupForm() {
       const destination =
         next && next.startsWith("/") && !next.startsWith("//")
           ? next
-          : "/portfolio";
+          : "/market";
       router.push(destination);
       router.refresh();
     } catch (error) {

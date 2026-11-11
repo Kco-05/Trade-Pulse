@@ -54,7 +54,7 @@ type QuickSize = "25" | "50" | "75" | "max";
 export type ExecutionSlipProps = {
   selectedTicker: string | null;
   currentPrice: number | null;
-  /** Prefill Buy/Sell tab from deep links like `/?ticker=AAPL&side=sell`. */
+  /** Prefill Buy/Sell tab from deep links like `/market?ticker=AAPL&side=sell`. */
   initialSide?: TradeType;
 };
 

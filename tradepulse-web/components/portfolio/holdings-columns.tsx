@@ -147,17 +147,29 @@ export function createHoldingsColumns(): ColumnDef<HoldingRow>[] {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                render={<Link href={`/?ticker=${encodeURIComponent(ticker)}&side=buy`} />}
+                render={
+                  <Link
+                    href={`/market?ticker=${encodeURIComponent(ticker)}&side=buy`}
+                  />
+                }
               >
                 Buy more
               </DropdownMenuItem>
               <DropdownMenuItem
-                render={<Link href={`/?ticker=${encodeURIComponent(ticker)}&side=sell`} />}
+                render={
+                  <Link
+                    href={`/market?ticker=${encodeURIComponent(ticker)}&side=sell`}
+                  />
+                }
               >
                 Sell
               </DropdownMenuItem>
               <DropdownMenuItem
-                render={<Link href={`/?ticker=${encodeURIComponent(ticker)}`} />}
+                render={
+                  <Link
+                    href={`/market?ticker=${encodeURIComponent(ticker)}`}
+                  />
+                }
               >
                 View chart
               </DropdownMenuItem>

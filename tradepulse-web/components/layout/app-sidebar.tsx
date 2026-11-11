@@ -20,7 +20,7 @@ import {
 const navItems = [
   {
     title: "Market",
-    href: "/",
+    href: "/market",
     icon: LineChart,
   },
   {
@@ -45,7 +45,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
-              render={<Link href="/" />}
+              render={<Link href="/market" />}
               tooltip="TradePulse"
             >
               <div className="flex size-8 items-center justify-center rounded-lg bg-emerald-400/15 text-sm font-semibold text-emerald-400">
@@ -68,10 +68,8 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenu>
               {navItems.map((item) => {
                 const active =
-                  item.href === "/"
-                    ? pathname === "/"
-                    : pathname === item.href ||
-                      pathname.startsWith(`${item.href}/`);
+                  pathname === item.href ||
+                  pathname.startsWith(`${item.href}/`);
                 return (
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton

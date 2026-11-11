@@ -35,6 +35,9 @@ function titleFromPath(pathname: string): string {
   if (pathname.startsWith("/portfolio")) {
     return "Portfolio";
   }
+  if (pathname.startsWith("/market")) {
+    return "Market";
+  }
   return "TradePulse";
 }
 
