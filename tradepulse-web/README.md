@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# tradepulse-web
 
-## Getting Started
+Primary TradePulse UI — Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui.
 
-First, run the development server:
+## Prerequisites
+
+- Node.js 20+
+- Backend services running (market `8082`, wallet `8081`, portfolio `8083`)
+
+See the [root README](../README.md) for full start order.
+
+## Setup
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Dev server on port 3000 |
+| `npm run build` | Production build |
+| `npm start` | Serve production build |
+| `npm run lint` | ESLint |
 
-## Learn More
+## Demo login
 
-To learn more about Next.js, take a look at the following resources:
+- Username: `demo`
+- Password: `demo123`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- API calls use Next.js rewrites to the local microservices (no browser CORS).
+- Session is an httpOnly `tp_uid` cookie set by `/api/session`.
+- Do not add a DB driver, JPA, or business logic here — REST + render only.

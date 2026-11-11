@@ -6,6 +6,7 @@ Virtual stock trading simulator. Users get virtual cash, watch simulated live pr
 
 - Java 17+
 - Maven 3.9+
+- Node.js 20+ (for `tradepulse-web`)
 
 ## Components
 
@@ -14,23 +15,26 @@ Virtual stock trading simulator. Users get virtual cash, watch simulated live pr
 | stock-market-service | 8082 | `mvn spring-boot:run` |
 | user-wallet-service | 8081 | `mvn spring-boot:run` |
 | trading-portfolio-service | 8083 | `mvn spring-boot:run` |
-| tradepulse-ui | 8080 | `mvn cargo:run` (or deploy WAR to Tomcat 10.1) |
+| **tradepulse-web** (primary UI) | 3000 | `npm run dev` |
+| tradepulse-ui (legacy JSF fallback) | 8080 | `mvn package cargo:run` |
 
 ## Start order
 
 1. stock-market-service (8082)
 2. user-wallet-service (8081)
 3. trading-portfolio-service (8083)
-4. tradepulse-ui (8080)
+4. tradepulse-web (3000)
+
+Open four terminals:
 
 ```bash
 cd stock-market-service && mvn spring-boot:run
 cd user-wallet-service && mvn spring-boot:run
 cd trading-portfolio-service && mvn spring-boot:run
-cd tradepulse-ui && mvn package cargo:run
+cd tradepulse-web && npm install && npm run dev
 ```
 
-The UI runs on Tomcat 10.1 started by the Cargo plugin. The first `cargo:run` downloads the Tomcat zip from Maven Central into `~/.m2`. Run `mvn package` first so Cargo deploys the latest WAR. Open http://localhost:8080/ (redirects to the login page).
+Then open http://localhost:3000
 
 ## Demo login
 
@@ -38,6 +42,15 @@ The UI runs on Tomcat 10.1 started by the Cargo plugin. The first `cargo:run` do
 - Password: `demo123`
 
 Seeded by the wallet service when the `users` table is empty.
+
+## App routes (tradepulse-web)
+
+| Path | Access | Notes |
+|------|--------|-------|
+| `/` | Public | Landing page |
+| `/login`, `/signup` | Public | Auth (tabs in one card) |
+| `/market` | Public | Live market; trade slip locked when logged out |
+| `/portfolio`, `/history` | Protected | Require session cookie `tp_uid` |
 
 ## H2 consoles
 
@@ -49,23 +62,29 @@ Seeded by the wallet service when the `users` table is empty.
 
 Use a blank password (or the defaults shown in each service's `application.properties`).
 
-## UI notes
+## Architecture notes
 
-- Stack: Jakarta Faces 4 (Mojarra), PrimeFaces 13 (saga theme), Weld 5 for CDI, on Tomcat 10.1.
-- Backend URLs live in `tradepulse-ui/src/main/resources/application.properties`.
-- `AuthFilter` redirects any page except login, register and Faces resources to `login.xhtml` when no user is signed in. AJAX requests get a Faces partial-response redirect.
-- Design tokens (colors, type scale, spacing, radius) are CSS variables at the top of `src/main/webapp/resources/css/app.css`. Fonts are Space Grotesk (headings) and IBM Plex Sans (body) from Google Fonts, falling back to Segoe UI when offline.
+- Three independent Spring Boot microservices, each with its own H2 file database. No shared DB.
+- Services talk only over REST/JSON.
+- **tradepulse-web** (Next.js App Router, TypeScript, Tailwind, shadcn/ui) is the primary UI. It has no DB driver and no business logic — it only calls REST and renders.
+- Next.js rewrites proxy browser calls (no Spring CORS required):
+  - `/api/users/*` → wallet `8081`
+  - `/api/stocks/*` → market `8082`
+  - `/api/trade/*` and `/api/portfolio/*` → portfolio `8083`
+- Auth is simplified: login sets an httpOnly `tp_uid` cookie. No JWT / Spring Security.
+- **tradepulse-ui** (JSF/PrimeFaces on Tomcat) is retained as a lab fallback and should not be edited for new features.
 
 ## API overview
 
-See [docs/TECHNICAL.md](docs/TECHNICAL.md) §4.5 for full contracts.
+See [docs/TECHNICAL.md](docs/TECHNICAL.md) for full contracts.
 
 - Wallet `8081`: register, login, balance, debit, credit
-- Market `8082`: list/get stocks
+- Market `8082`: list/get stocks, price history
 - Portfolio `8083`: buy, sell, history, holdings
 
 ## Docs
 
 - [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) — functional and business rules
 - [docs/TECHNICAL.md](docs/TECHNICAL.md) — APIs, schema, trade flows
+- [docs/UI_PLAN.md](docs/UI_PLAN.md) — frontend component roadmap
 - [docs/LIMITATIONS.md](docs/LIMITATIONS.md) — simplified auth, no distributed transactions, compensation only
