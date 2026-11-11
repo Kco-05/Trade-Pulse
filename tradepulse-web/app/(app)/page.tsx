@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 
 import { MarketFilters, type MarketFilter } from "@/components/market/market-filters";
@@ -13,6 +14,15 @@ import {
 import { useWatchlist } from "@/hooks/use-watchlist";
 import { useStocks } from "@/lib/api";
 
+const PriceChart = dynamic(
+  () =>
+    import("@/components/market/price-chart").then((mod) => mod.PriceChart),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-80 rounded-xl" />,
+  },
+);
+
 function MarketPageSkeleton() {
   return (
     <div className="flex flex-col gap-4">
@@ -23,18 +33,22 @@ function MarketPageSkeleton() {
       </div>
       <Skeleton className="h-9 w-full max-w-sm rounded-lg" />
       <Skeleton className="h-72 rounded-xl" />
+      <Skeleton className="h-80 rounded-xl" />
     </div>
   );
 }
 
 export default function MarketPage() {
-  const { data, isLoading, isError, error } = useStocks();
+  const { data, isLoading, isError, error, dataUpdatedAt } = useStocks();
   const rows = useStockMarketState(data);
   const { toggle, has } = useWatchlist();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<MarketFilter>("all");
+  const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
 
   const summary = useMemo(() => computeMarketSummary(rows), [rows]);
+
+  const activeTicker = selectedTicker ?? data?.[0]?.tickerSymbol ?? null;
 
   const filteredRows = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -53,6 +67,11 @@ export default function MarketPage() {
       return true;
     });
   }, [rows, search, filter, has]);
+
+  const selectedRow = useMemo(
+    () => rows.find((row) => row.tickerSymbol === activeTicker) ?? null,
+    [rows, activeTicker],
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -87,7 +106,18 @@ export default function MarketPage() {
             rows={filteredRows}
             toggleWatchlist={toggle}
             isWatched={has}
+            selectedTicker={activeTicker}
+            onSelectTicker={setSelectedTicker}
           />
+          {activeTicker ? (
+            <PriceChart
+              ticker={activeTicker}
+              livePrice={selectedRow?.currentPrice ?? null}
+              tickAt={dataUpdatedAt}
+            />
+          ) : (
+            <Skeleton className="h-80 rounded-xl" />
+          )}
         </>
       )}
     </div>

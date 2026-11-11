@@ -26,12 +26,16 @@ type MarketTableProps = {
   rows: MarketRow[];
   toggleWatchlist: (ticker: string) => void;
   isWatched: (ticker: string) => boolean;
+  selectedTicker?: string | null;
+  onSelectTicker?: (ticker: string) => void;
 };
 
 export function MarketTable({
   rows,
   toggleWatchlist,
   isWatched,
+  selectedTicker,
+  onSelectTicker,
 }: MarketTableProps) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "tickerSymbol", desc: false },
@@ -89,12 +93,33 @@ export function MarketTable({
           ) : (
             table.getRowModel().rows.map((row) => {
               const flash = row.original.flash;
+              const selected = selectedTicker === row.original.tickerSymbol;
               return (
                 <motion.tr
                   key={row.id}
                   data-slot="table-row"
+                  role={onSelectTicker ? "button" : undefined}
+                  tabIndex={onSelectTicker ? 0 : undefined}
+                  aria-selected={onSelectTicker ? selected : undefined}
+                  onClick={
+                    onSelectTicker
+                      ? () => onSelectTicker(row.original.tickerSymbol)
+                      : undefined
+                  }
+                  onKeyDown={
+                    onSelectTicker
+                      ? (event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            onSelectTicker(row.original.tickerSymbol);
+                          }
+                        }
+                      : undefined
+                  }
                   className={cn(
                     "border-b border-zinc-800 transition-colors hover:bg-muted/50",
+                    onSelectTicker && "cursor-pointer",
+                    selected && "bg-zinc-800/60 ring-1 ring-inset ring-zinc-700",
                   )}
                   initial={false}
                   animate={{
@@ -103,7 +128,9 @@ export function MarketTable({
                         ? "rgba(52, 211, 153, 0.12)"
                         : flash === "down"
                           ? "rgba(244, 63, 94, 0.12)"
-                          : "rgba(0, 0, 0, 0)",
+                          : selected
+                            ? "rgba(39, 39, 42, 0.6)"
+                            : "rgba(0, 0, 0, 0)",
                   }}
                   transition={{ duration: 0.35 }}
                 >

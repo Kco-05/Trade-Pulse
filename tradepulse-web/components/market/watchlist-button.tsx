@@ -23,7 +23,10 @@ export function WatchlistButton({
       size="icon-sm"
       aria-label={starred ? `Remove ${ticker} from watchlist` : `Add ${ticker} to watchlist`}
       aria-pressed={starred}
-      onClick={() => onToggle(ticker)}
+      onClick={(event) => {
+        event.stopPropagation();
+        onToggle(ticker);
+      }}
       className="text-muted-foreground hover:text-foreground"
     >
       <Star

@@ -24,6 +24,11 @@ export type StockQuote = {
   currentPrice: number;
 };
 
+export type PriceHistory = {
+  price: number;
+  recordedAt: string;
+};
+
 export type TradeRequest = {
   userId: number;
   tickerSymbol: string;
