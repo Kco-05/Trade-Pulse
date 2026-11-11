@@ -2,7 +2,14 @@ export { apiClient } from "./client";
 export { buy, getHistory, getPortfolio, sell } from "./portfolio";
 export { getStock, getStockHistory, getStocks } from "./stocks";
 export { getBalance, login, register } from "./wallet";
-export { useBalance, usePortfolio, useStockHistory, useStocks } from "./hooks";
+export {
+  useBalance,
+  useBuy,
+  usePortfolio,
+  useSell,
+  useStockHistory,
+  useStocks,
+} from "./hooks";
 export type {
   ApiErrorBody,
   AuthResponse,

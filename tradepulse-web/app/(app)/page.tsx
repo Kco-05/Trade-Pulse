@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 
+import { ExecutionSlip } from "@/components/market/execution-slip";
 import { MarketFilters, type MarketFilter } from "@/components/market/market-filters";
 import { MarketSummaryCards } from "@/components/market/market-summary";
 import { MarketTable } from "@/components/market/market-table";
@@ -102,22 +103,30 @@ export default function MarketPage() {
             filter={filter}
             onFilterChange={setFilter}
           />
-          <MarketTable
-            rows={filteredRows}
-            toggleWatchlist={toggle}
-            isWatched={has}
-            selectedTicker={activeTicker}
-            onSelectTicker={setSelectedTicker}
-          />
-          {activeTicker ? (
-            <PriceChart
-              ticker={activeTicker}
-              livePrice={selectedRow?.currentPrice ?? null}
-              tickAt={dataUpdatedAt}
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+            <div className="flex min-w-0 flex-col gap-4">
+              <MarketTable
+                rows={filteredRows}
+                toggleWatchlist={toggle}
+                isWatched={has}
+                selectedTicker={activeTicker}
+                onSelectTicker={setSelectedTicker}
+              />
+              {activeTicker ? (
+                <PriceChart
+                  ticker={activeTicker}
+                  livePrice={selectedRow?.currentPrice ?? null}
+                  tickAt={dataUpdatedAt}
+                />
+              ) : (
+                <Skeleton className="h-80 rounded-xl" />
+              )}
+            </div>
+            <ExecutionSlip
+              selectedTicker={activeTicker}
+              currentPrice={selectedRow?.currentPrice ?? null}
             />
-          ) : (
-            <Skeleton className="h-80 rounded-xl" />
-          )}
+          </div>
         </>
       )}
     </div>
