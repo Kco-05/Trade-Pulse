@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { buy, getPortfolio, sell } from "./portfolio";
+import { buy, getHistory, getPortfolio, sell } from "./portfolio";
 import { getStockHistory, getStocks } from "./stocks";
 import type { TradeRequest } from "./types";
 import { getBalance } from "./wallet";
@@ -38,6 +38,14 @@ export function usePortfolio(userId: number | null | undefined) {
   });
 }
 
+export function useHistory(userId: number | null | undefined) {
+  return useQuery({
+    queryKey: ["history", userId],
+    queryFn: () => getHistory(userId as number),
+    enabled: userId != null,
+  });
+}
+
 function useInvalidateTradeQueries() {
   const queryClient = useQueryClient();
 
@@ -45,6 +53,7 @@ function useInvalidateTradeQueries() {
     Promise.all([
       queryClient.invalidateQueries({ queryKey: ["balance", userId] }),
       queryClient.invalidateQueries({ queryKey: ["portfolio", userId] }),
+      queryClient.invalidateQueries({ queryKey: ["history", userId] }),
     ]);
 }
 

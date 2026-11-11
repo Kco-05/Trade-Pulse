@@ -54,6 +54,8 @@ type QuickSize = "25" | "50" | "75" | "max";
 export type ExecutionSlipProps = {
   selectedTicker: string | null;
   currentPrice: number | null;
+  /** Prefill Buy/Sell tab from deep links like `/?ticker=AAPL&side=sell`. */
+  initialSide?: TradeType;
 };
 
 function clampQuantity(value: number): number {
@@ -82,6 +84,7 @@ function CurrencyFlow({ value }: { value: number }) {
 function ExecutionSlipForm({
   selectedTicker,
   currentPrice,
+  initialSide,
 }: ExecutionSlipProps) {
   const userId = useSessionStore((s) => s.userId);
   const loggedIn = userId != null;
@@ -91,7 +94,7 @@ function ExecutionSlipForm({
   const buyMutation = useBuy();
   const sellMutation = useSell();
 
-  const [tradeType, setTradeType] = useState<TradeType>("buy");
+  const [tradeType, setTradeType] = useState<TradeType>(initialSide ?? "buy");
   const [quantity, setQuantity] = useState(MIN_QTY);
   const [quickSize, setQuickSize] = useState<QuickSize | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -432,6 +435,7 @@ function ExecutionSlipForm({
 export function ExecutionSlip({
   selectedTicker,
   currentPrice,
+  initialSide,
 }: ExecutionSlipProps) {
   const isMobile = useIsMobile();
   const title = selectedTicker ? `Trade ${selectedTicker}` : "Trade";
@@ -456,8 +460,10 @@ export function ExecutionSlip({
           </DrawerHeader>
           <div className="overflow-y-auto px-4 pb-6">
             <ExecutionSlipForm
+              key={`${selectedTicker ?? "none"}-${initialSide ?? "buy"}`}
               selectedTicker={selectedTicker}
               currentPrice={currentPrice}
+              initialSide={initialSide}
             />
           </div>
         </DrawerContent>
@@ -475,8 +481,10 @@ export function ExecutionSlip({
       </CardHeader>
       <CardContent>
         <ExecutionSlipForm
+          key={`${selectedTicker ?? "none"}-${initialSide ?? "buy"}`}
           selectedTicker={selectedTicker}
           currentPrice={currentPrice}
+          initialSide={initialSide}
         />
       </CardContent>
     </Card>

@@ -1,7 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useMemo, useState } from "react";
 
 import { ExecutionSlip } from "@/components/market/execution-slip";
 import { MarketFilters, type MarketFilter } from "@/components/market/market-filters";
@@ -39,17 +40,40 @@ function MarketPageSkeleton() {
   );
 }
 
-export default function MarketPage() {
+function parseSide(value: string | null): "buy" | "sell" | undefined {
+  if (value === "buy" || value === "sell") return value;
+  return undefined;
+}
+
+function normalizeTicker(value: string | null): string | null {
+  if (!value) return null;
+  const normalized = value.trim().toUpperCase();
+  return normalized.length > 0 ? normalized : null;
+}
+
+function MarketPageContent() {
+  const searchParams = useSearchParams();
+  const urlTicker = normalizeTicker(searchParams.get("ticker"));
+  const sideParam = parseSide(searchParams.get("side"));
+
   const { data, isLoading, isError, error, dataUpdatedAt } = useStocks();
   const rows = useStockMarketState(data);
   const { toggle, has } = useWatchlist();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<MarketFilter>("all");
-  const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
+  const [manualTicker, setManualTicker] = useState<string | null>(null);
+  const [seenUrlTicker, setSeenUrlTicker] = useState(urlTicker);
+
+  // When the deep-link ticker changes, prefer the URL over a prior row click.
+  if (urlTicker !== seenUrlTicker) {
+    setSeenUrlTicker(urlTicker);
+    setManualTicker(null);
+  }
 
   const summary = useMemo(() => computeMarketSummary(rows), [rows]);
 
-  const activeTicker = selectedTicker ?? data?.[0]?.tickerSymbol ?? null;
+  const activeTicker =
+    manualTicker ?? urlTicker ?? data?.[0]?.tickerSymbol ?? null;
 
   const filteredRows = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -110,7 +134,7 @@ export default function MarketPage() {
                 toggleWatchlist={toggle}
                 isWatched={has}
                 selectedTicker={activeTicker}
-                onSelectTicker={setSelectedTicker}
+                onSelectTicker={setManualTicker}
               />
               {activeTicker ? (
                 <PriceChart
@@ -125,10 +149,19 @@ export default function MarketPage() {
             <ExecutionSlip
               selectedTicker={activeTicker}
               currentPrice={selectedRow?.currentPrice ?? null}
+              initialSide={sideParam}
             />
           </div>
         </>
       )}
     </div>
+  );
+}
+
+export default function MarketPage() {
+  return (
+    <Suspense fallback={<MarketPageSkeleton />}>
+      <MarketPageContent />
+    </Suspense>
   );
 }

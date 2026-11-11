@@ -5,6 +5,7 @@ export { getBalance, login, register } from "./wallet";
 export {
   useBalance,
   useBuy,
+  useHistory,
   usePortfolio,
   useSell,
   useStockHistory,
